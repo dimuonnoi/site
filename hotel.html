@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Đi muôn nơi</title>
+    <link rel="icon" type="image/x-icon" href="" />
+    <!-- Google fonts-->
+    <link
+        href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+
+#canvas-container {
+            width: 800px;
+            height: 500px;
+            border: 2px dashed #ccc;
+            position: relative;
+            overflow: hidden;
+            background-color: white;
+        }
+        .draggable {
+            position: absolute;
+            cursor: move;
+        }
+        .image-selection img {
+            width: 100px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .circle-buttons {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        opacity: 0.7;
+      }
+
+      /* Mặc định chỉ hiển thị Home & Design */
+      .circle-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.3);
+        color: white;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        font-size: 11px;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .circle-button:hover {
+        background-color: rgba(84, 84, 84, 0.5); /* Màu xanh có độ trong suốt */
+        transform: scale(1.1);
+        opacity: 1;
+      }
+
+
+/* Home và Design luôn hiển thị */
+.circle-buttons .circle-button[href="index.html"],
+.circle-buttons .circle-button[href="Design.html"] {
+    display: flex;
+    background-color: #666666;
+    position: relative;
+}
+
+/* Đẩy nút Design xuống dưới Home để không bị đè */
+.circle-buttons .circle-button[href="Design.html"] {
+    margin-top: 70px;
+}
+
+/* Hover vào Home trên PC thì hiển thị các nút khác */
+@media (min-width: 992px) {
+    .circle-buttons:hover .circle-button {
+        display: flex;
+    }
+}
+
+/* Khi bấm vào Home trên điện thoại, hiển thị các nút khác bên trái */
+@media (max-width: 991px) {
+    .circle-buttons.active .circle-button {
+        display: flex;
+     
+    }
+}
+
+/* Giữ Tips luôn hiển thị */
+.circle-buttons .circle-button[href="design.html"] {
+    display: flex;
+}
+
+
+.fb-button {
+    color: rgb(26, 34, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+
+
+
+        p {
+            word-break: break-word;
+        }
+
+        @keyframes chase {
+            0% {
+                box-shadow: 0 0 0 rgba(255, 0, 0, 0.7);
+            }
+
+            25% {
+                box-shadow: 10px 10px 0 rgba(66, 48, 16, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 10px 0 rgba(255, 255, 0, 0.7);
+            }
+
+            75% {
+                box-shadow: -10px 10px 0 rgba(0, 128, 0, 0.7);
+            }
+
+            100% {
+                box-shadow: 0 0 0 rgba(0, 0, 255, 0.7);
+            }
+        }
+
+        .about-heading-content {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-heading-img {
+            animation: chase 2s linear infinite;
+        }
+
+        .bg-faded {
+            position: relative;
+            overflow: hidden;
+            animation: chase 2s linear infinite;
+            padding: 20px;
+            /* Đảm bảo padding để border không bị chồng lên nội dung */
+            border-radius: 8px;
+            /* Thêm bo góc cho nền */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            /* Thêm bóng cho hiệu ứng nổi bật */
+        }
+
+        .logo-image {
+            width: 50px;
+            /*  logo nhỏ */
+            height: 50px;
+            /* logo nhỏ */
+            border-radius: 50%;
+            /* Làm tròn */
+            margin-right: 5px;
+            /* khoảng cách giữa logo và tên */
+            object-fit: cover;
+            /* hình ảnh không bị méo */
+            vertical-align: middle;
+            /* căn giữa logo */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="site-heading text-center text-faded d-none d-lg-block">
+            <img src="img/logo.png" alt="Logo" class="logo-image">
+            <span class="site-heading-upper text-primary mb-3" style="margin-top: 5px;">Đi Muôn Nơi</span>
+            <span class="site-heading-lower">Cần Thơ</span>
+
+        </h1>
+    </header>
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
+
+        <div class="container">
+            <a class="navbar-brand text-uppercase fw-bold d-lg-none" style="margin-left: 10px;" href="index.html">
+                <img src="img/logo.png" alt="Logo" class="logo-image"> Đi Muôn Nơi
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSuppo     rtedContent"
+                aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
+                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="eat.html">Junket</a></li>
+                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="hotel.html">Hotel</a></li>
+                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="more.html">Location</a></li>
+                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="meoDuLich.html">Tips</a>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="design.html">Design</a>
+                    <li class="nav-item px-lg-4">
+                        <a class="nav-link" href="https://www.facebook.com/profile.php?id=61567367394026"
+                            target="_blank" style="color: rgb(26, 34, 255);">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                    </li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="circle-buttons d-lg-none">
+        <a href="index.html" class="circle-button">Travel</a>
+        <a href="eat.html" class="circle-button">Junket</a>
+        <a href="hotel.html" class="circle-button">Hotel</a>
+        <a href="more.html" class="circle-button">Location</a>
+        <a href="meoDuLich.html" class="circle-button">Tips</a>
+        <a href="design.html" class="circle-button">Design</a>
+        <a href="index.html" class="circle-button">Order</a>
+        <a href="index.html" class="circle-button">Home</a>
+        <a href="https://www.facebook.com/profile.php?id=61567367394026" class="fb-button"> <i
+                class="fa-brands fa-facebook"></i></a>
+    </div>
+
+    <section class="page-section about-heading">
+        <div class="container">
+            <img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="img/moreDiaDiem/sheraton.jpg"
+                alt="..." />
+            <div class="about-heading-content">
+                <div class="row">
+                    <div class="col-xl-9 col-lg-10 mx-auto">
+                        <div class="bg-faded rounded p-5">
+                            <h2 class="section-heading mb-4">
+                                <span class="section-heading-upper">Thành Phố Cần Thơ </span>
+                                <span class="section-heading-lower">Sheraton Cần Thơ </span>
+                            </h2>
+                            <p>Gói 𝗚𝗼𝗼𝗱 𝗠𝗼𝗿𝗻𝗶𝗻𝗴 𝗖𝗮𝗻 𝗧𝗵𝗼 | Từ VND 1,155,000*/ Khách/ Đêm <br>
+                                Gói 𝗦𝗮𝘃𝗲 𝗢𝗻 𝗦𝘁𝗮𝘆 𝗙𝗼𝗿 𝗕𝗿𝗲𝗮𝗸𝗳𝗮𝘀𝘁 | Từ VND 990,000*/ Khách/ Đêm<br>
+                                Gói 𝗦𝘁𝗮𝘆 𝗘𝗹𝗲𝘃𝗮𝘁𝗲𝗱, 𝗦𝘁𝗮𝘆 𝗘𝗹𝗶𝘁𝗲 | Từ VND 1,500,000*/ Khách/ Đêm<br>
+                                Gói 𝗦𝗮𝘃𝗼𝗿 𝗧𝗵𝗲 𝗙𝗹𝗮𝘃𝗼𝗿 | Từ VND 1,110,000*/ Khách/ Đêm</p>
+                            <p class="mb-0">
+                                Địa chỉ: Số 209, đường 30/4 , Xuân Khánh, Ninh Kiều
+                                <em>lust</em>
+
+                                Liên hệ ngay 0292 376 1888 để được tư vấn thêm thông tin chi tiết và lên kế hoạch cho
+                                những kỳ nghỉ tuyệt vời!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="page-section about-heading">
+        <div class="container">
+            <img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="img/moreDiaDiem/iris.jpg" alt="..." />
+            <div class="about-heading-content">
+                <div class="row">
+                    <div class="col-xl-9 col-lg-10 mx-auto">
+                        <div class="bg-faded rounded p-5">
+                            <h2 class="section-heading mb-4">
+                                <span class="section-heading-upper">Thành Phố Cần Thơ </span>
+                                <span class="section-heading-lower">IRIS HOTEL Cần Thơ </span>
+                            </h2>
+                            <p>Gói bao gồm Ăn Sáng | Từ VND 636,000*/ 2 Khách/ Ngày
+                            </p>
+                            <p class="mb-0">
+                                Địa Chỉ: Số 224, Đường 30/4, P.Xuân Khánh, Q.Ninh Kiều, Cần Thơ
+                                Liên hệ ngay 0292 3686 969 để được tư vấn thêm thông tin chi tiết và lên kế hoạch cho
+                                những kỳ nghỉ tuyệt vời
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="page-section about-heading">
+        <div class="container">
+            <img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="img/moreDiaDiem/muongthanh.jpg"
+                alt="..." />
+            <div class="about-heading-content">
+                <div class="row">
+                    <div class="col-xl-9 col-lg-10 mx-auto">
+                        <div class="bg-faded rounded p-5">
+                            <h2 class="section-heading mb-4">
+                                <span class="section-heading-upper">Thành Phố Cần Thơ </span>
+                                <span class="section-heading-lower">Khách sạn Mường Thanh Luxury Cần Thơ </span>
+                            </h2>
+                            <p>Gói bao gồm Bữa sáng + Phòng nghỉ hạng Deluxe + Tour chợ nổi / 1,350,000 / 2 Người lớn +
+                                2 bé nhỏ/2N1Đ</p>
+                            <p class="mb-0">
+
+
+                                Địa Chỉ: Khu E1, Cồn Cái Khế, P.Cái Khế, Q.Ninh Kiều, Cần Thơ
+                                Liên hệ ngay 0292 3688 888 để được tư vấn thêm thông tin chi tiết và lên kế hoạch cho
+                                những kỳ nghỉ tuyệt vời
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+  
+    
+
+
+    <a href="#" class="bottom-right-button">^</a>
+    <footer class="footer text-faded text-center py-3">
+        <div class="container">
+            <p class="m-0 small">Copyright &copy; by DiMuonNoi</p>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let homeButton = document.querySelector(".circle-button[href='index.html']");
+            let buttonsContainer = document.querySelector(".circle-buttons");
+        
+            homeButton.addEventListener("click", function (event) {
+                event.preventDefault(); // Ngăn chặn load lại trang
+                buttonsContainer.classList.toggle("active");
+            });
+        });
+        </script>
+        
+
+</body>
+
+</html>
