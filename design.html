@@ -305,9 +305,18 @@
         onclick="addPresetImage(this.src)"
       />
       <img
-        src="https://salt.tikicdn.com/cache/280x280/ts/product/70/5a/d8/f52a43cf20620e99becdc45516a1bfa8.jpg"
+      src="img/huhu.png"
+      onclick="addPresetImage(this.src)"
+    />
+      <img
+        src="img/aoThunTrang.png"
         onclick="addPresetImage(this.src)"
       />
+
+      <img
+      src="img/tuiTrang.png"
+      onclick="addPresetImage(this.src)"
+    />
     </div>
     <input type="file" id="upload" accept="image/*" />
     <button onclick="addText()">Add text</button>
@@ -442,7 +451,7 @@ document.addEventListener("touchend", function () {
             img.classList.add("draggable");
 
             // Kiểm tra nếu là ảnh cần phóng to
-            if (src.includes("f52a43cf20620e99becdc45516a1bfa8.jpg")) {
+            if (src.includes("aoThunTrang.png") || src.includes("tuiTrang.png"))  {
                 img.style.width = "100%";
                 img.style.height = "100%";
                 img.style.position = "absolute";
@@ -462,7 +471,7 @@ document.addEventListener("touchend", function () {
         img.src = src;
         img.classList.add("draggable");
 
-        if (src.includes("f52a43cf20620e99becdc45516a1bfa8.jpg")) {
+        if (src.includes("aoThunTrang.png")|| src.includes("tuiTrang.png")) {
             img.style.width = "100%";
             img.style.height = "100%";
             img.style.position = "absolute";
