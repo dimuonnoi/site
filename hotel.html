@@ -72,16 +72,17 @@
 
 /* Home và Design luôn hiển thị */
 .circle-buttons .circle-button[href="index.html"],
-.circle-buttons .circle-button[href="Design.html"] {
+.circle-buttons .circle-button[href="Design.html"],
+.circle-buttons .circle-button[href="blog.html"]  {
     display: flex;
     background-color: #666666;
     position: relative;
 }
 
 /* Đẩy nút Design xuống dưới Home để không bị đè */
-.circle-buttons .circle-button[href="Design.html"] {
+/* .circle-buttons .circle-button[href="Design.html"] {
     margin-top: 70px;
-}
+} */
 
 /* Hover vào Home trên PC thì hiển thị các nút khác */
 @media (min-width: 992px) {
@@ -206,8 +207,11 @@
                     <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="eat.html">Junket</a></li>
                     <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="hotel.html">Hotel</a></li>
                     <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="more.html">Location</a></li>
-                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="meoDuLich.html">Tips</a>
-                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="design.html">Design</a>
+                    <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="meoDuLich.html">Tips</a></li>
+                        <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="design.html">Design</a></li>
+                            <li class="nav-item px-lg-4">
+                                <a class="nav-link text-uppercase" href="blog.html">Blog</a>
+                              </li>
                     <li class="nav-item px-lg-4">
                         <a class="nav-link" href="https://www.facebook.com/profile.php?id=61567367394026"
                             target="_blank" style="color: rgb(26, 34, 255);">
@@ -228,6 +232,7 @@
         <a href="design.html" class="circle-button">Design</a>
         <a href="index.html" class="circle-button">Order</a>
         <a href="index.html" class="circle-button">Home</a>
+        <a href="blog.html" class="circle-button">Blog</a>
         <a href="https://www.facebook.com/profile.php?id=61567367394026" class="fb-button"> <i
                 class="fa-brands fa-facebook"></i></a>
     </div>
@@ -314,7 +319,10 @@
         </div>
     </section>
   
-    
+    <p
+    id="visitCounter"
+    style="text-align: center; font-weight: bold; color: red"
+  ></p>
 
 
     <a href="#" class="bottom-right-button">^</a>
@@ -326,7 +334,51 @@
     <!-- Bootstrap core JS-->
 
 
-
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+        import {
+          getDatabase,
+          ref,
+          get,
+          set,
+        } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+  
+        // Cấu hình Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyABQbJbXt5ppmruAmfoE8GqIRLnw6KFyAQ",
+          authDomain: "execount-380eb.firebaseapp.com",
+          databaseURL: "https://execount-380eb-default-rtdb.firebaseio.com",
+          projectId: "execount-380eb",
+          storageBucket: "execount-380eb.firebasestorage.app",
+          messagingSenderId: "489865544413",
+          appId: "1:489865544413:web:7fcede79fccf4e4cfed134",
+          measurementId: "G-PBYTC4143Z",
+        };
+  
+        // Khởi tạo Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+  
+        function updateVisitCount() {
+          const visitRef = ref(database, "visit_count");
+  
+          get(visitRef).then((snapshot) => {
+            let visitCount = snapshot.val() || 0;
+            visitCount++;
+            set(visitRef, visitCount);
+  
+            document.getElementById("visitCounter").innerText =
+              "Lượt truy cập: " + visitCount;
+          });
+        }
+  
+        // Gọi hàm khi trang load
+        document.addEventListener("DOMContentLoaded", updateVisitCount);
+      </script>
+  
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
