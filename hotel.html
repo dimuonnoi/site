@@ -198,9 +198,12 @@
                 <img src="img/logo.png" alt="Logo" class="logo-image"> Đi Muôn Nơi
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSuppo     rtedContent"
-                aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                aria-expanded="false" aria-label="Toggle navigation"> -->
+                
+                
+                <!-- <span class="navbar-toggler-icon"></span></button> -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item px-lg-4"><a class="nav-link text-uppercase" href="index.html">Home</a></li>
@@ -367,7 +370,7 @@
   
           get(visitRef).then((snapshot) => {
             let visitCount = snapshot.val() || 0;
-            visitCount++;
+            // visitCount++;
             set(visitRef, visitCount);
   
             document.getElementById("visitCounter").innerText =
