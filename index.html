@@ -337,10 +337,18 @@
       </div>
     </section>
     <a href="#" class="bottom-right-button">^</a>
+    <!-- <p
+      id="visitCounter"
+      style="text-align: center; font-weight: bold; color: red"
+    ></p> -->
     <p
       id="visitCounter"
       style="text-align: center; font-weight: bold; color: red"
     ></p>
+    <div
+      id="sourceStats"
+      style="text-align: center; font-weight: bold; color: blue"
+    ></div>
 
     <footer class="footer text-faded text-center py-3">
       <div class="container">
@@ -358,7 +366,7 @@
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
 
-    <script type="module">
+    <!-- <script type="module">
       // Import Firebase
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
@@ -400,6 +408,119 @@
       }
 
       // Gọi hàm khi trang load
+      document.addEventListener("DOMContentLoaded", updateVisitCount);
+    </script> -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        get,
+        set,
+        runTransaction,
+      } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+      // Cấu hình Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyABQbJbXt5ppmruAmfoE8GqIRLnw6KFyAQ",
+        authDomain: "execount-380eb.firebaseapp.com",
+        databaseURL: "https://execount-380eb-default-rtdb.firebaseio.com",
+        projectId: "execount-380eb",
+        storageBucket: "execount-380eb.firebasestorage.app",
+        messagingSenderId: "489865544413",
+        appId: "1:489865544413:web:7fcede79fccf4e4cfed134",
+        measurementId: "G-PBYTC4143Z",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      function updateVisitCount() {
+        const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại (YYYY-MM-DD)
+        const referrer = document.referrer.includes("facebook")
+          ? "Facebook"
+          : "Direct"; // Xác định nguồn truy cập
+
+        const todayRef = ref(database, `visits/${today}/total`);
+        const globalTotalRef = ref(database, `total_visits`);
+        const todaySourceRef = ref(database, `visits/${today}/${referrer}`);
+        const globalSourceRef = ref(database, `source_visits/${referrer}`);
+
+        // Cập nhật lượt truy cập hôm nay
+        runTransaction(
+          todayRef,
+          (currentValue) => (currentValue || 0) + 1
+        ).then(({ snapshot }) => {
+          updateUI(snapshot.val(), null, null);
+        });
+
+        // Cập nhật tổng lượt truy cập
+        runTransaction(
+          globalTotalRef,
+          (currentValue) => (currentValue || 0) + 1
+        ).then(({ snapshot }) => {
+          updateUI(null, snapshot.val(), null);
+        });
+
+        // Cập nhật số lượt truy cập theo nguồn hôm nay
+        runTransaction(
+          todaySourceRef,
+          (currentValue) => (currentValue || 0) + 1
+        );
+
+        // Cập nhật tổng số lượt truy cập theo nguồn
+        runTransaction(
+          globalSourceRef,
+          (currentValue) => (currentValue || 0) + 1
+        ).then(({ snapshot }) => {
+          updateUI(null, null, { source: referrer, count: snapshot.val() });
+        });
+
+        // Lấy toàn bộ thống kê nguồn truy cập hôm nay để hiển thị
+        get(ref(database, `visits/${today}`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            updateSourceStatsUI(data);
+          }
+        });
+
+        // Lấy thống kê tổng lượt truy cập theo nguồn
+        get(ref(database, `source_visits`)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            updateSourceStatsUI(data, true);
+          }
+        });
+      }
+
+      function updateUI(todayCount, totalCount, sourceData) {
+        const visitCounter = document.getElementById("visitCounter");
+        if (visitCounter) {
+          let text = "";
+          if (todayCount !== null)
+            text += `Lượt truy cập hôm nay: ${todayCount} <br>`;
+          if (totalCount !== null)
+            text += `Tổng lượt truy cập: ${totalCount} <br>`;
+          if (sourceData)
+            text += `Tổng lượt từ ${sourceData.source}: ${sourceData.count} <br>`;
+          visitCounter.innerHTML = text;
+        }
+      }
+
+      function updateSourceStatsUI(data, isTotal = false) {
+        const statsDiv = document.getElementById("sourceStats");
+        if (statsDiv) {
+          let title = isTotal
+            ? "Thống kê nguồn truy cập (Tổng):"
+            : "Thống kê nguồn truy cập hôm nay:";
+          let statsText = `<h3>${title}</h3>`;
+          for (const [source, count] of Object.entries(data)) {
+            statsText += `${source}: ${count} lượt <br>`;
+          }
+          statsDiv.innerHTML = statsText;
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", updateVisitCount);
     </script>
 
