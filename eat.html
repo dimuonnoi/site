@@ -519,14 +519,13 @@
       });
     </script>
     <script type="module">
-      // Import Firebase
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
       import {
         getDatabase,
         ref,
         get,
         set,
+        runTransaction,
       } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
       // Cấu hình Firebase
@@ -541,25 +540,57 @@
         measurementId: "G-PBYTC4143Z",
       };
 
-      // Khởi tạo Firebase
       const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
       const database = getDatabase(app);
 
       function updateVisitCount() {
-        const visitRef = ref(database, "visit_count");
+        const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại (YYYY-MM-DD)
+        const referrer = document.referrer.includes("facebook")
+          ? "Facebook"
+          : "Direct"; // Xác định nguồn truy cập
 
-        get(visitRef).then((snapshot) => {
-          let visitCount = snapshot.val() || 0;
-          // visitCount++;
-          set(visitRef, visitCount);
+        const todayRef = ref(database, `visits/${today}/total`);
+        const globalTotalRef = ref(database, `total_visits`);
+        const todaySourceRef = ref(database, `visits/${today}/${referrer}`);
+        const globalSourceRef = ref(database, `source_visits/${referrer}`);
 
-          document.getElementById("visitCounter").innerText =
-            "Lượt truy cập: " + visitCount;
+        // Cập nhật lượt truy cập hôm nay
+        runTransaction(todayRef, (currentValue) => currentValue || 0);
+
+        // Cập nhật tổng lượt truy cập
+        runTransaction(globalTotalRef, (currentValue) => currentValue || 0);
+
+        // Cập nhật số lượt truy cập theo nguồn hôm nay
+        runTransaction(todaySourceRef, (currentValue) => currentValue || 0);
+
+        // Cập nhật tổng số lượt truy cập theo nguồn
+        runTransaction(globalSourceRef, (currentValue) => currentValue || 0);
+
+        // Lấy dữ liệu để hiển thị
+        get(globalTotalRef).then((snapshot) => {
+          const totalVisits = snapshot.exists() ? snapshot.val() : 0;
+
+          get(ref(database, `source_visits/Facebook`)).then((snapshot) => {
+            const facebookVisits = snapshot.exists() ? snapshot.val() : 0;
+
+            get(ref(database, `source_visits/Direct`)).then((snapshot) => {
+              const directVisits = snapshot.exists() ? snapshot.val() : 0;
+
+              updateUI(totalVisits, facebookVisits, directVisits);
+            });
+          });
         });
       }
 
-      // Gọi hàm khi trang load
+      function updateUI(totalCount, facebookCount, directCount) {
+        const visitCounter = document.getElementById("visitCounter");
+        if (visitCounter) {
+          visitCounter.innerHTML = `
+        <p>Lượt truy cập : ${facebookCount + directCount}</p>
+        `;
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", updateVisitCount);
     </script>
   </body>

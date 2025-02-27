@@ -475,6 +475,8 @@
       style="text-align: center; font-weight: bold; color: red"
     ></p>
 
+    
+
     <a href="#" class="bottom-right-button">^</a>
     <footer class="footer text-faded text-center py-3" style="bottom: auto">
       <div class="container">
@@ -498,50 +500,91 @@
         });
       });
     </script>
-     <script type="module">
-        // Import Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
-        import {
-          getDatabase,
-          ref,
-          get,
-          set,
-        } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
-  
-        // Cấu hình Firebase
-        const firebaseConfig = {
-          apiKey: "AIzaSyABQbJbXt5ppmruAmfoE8GqIRLnw6KFyAQ",
-          authDomain: "execount-380eb.firebaseapp.com",
-          databaseURL: "https://execount-380eb-default-rtdb.firebaseio.com",
-          projectId: "execount-380eb",
-          storageBucket: "execount-380eb.firebasestorage.app",
-          messagingSenderId: "489865544413",
-          appId: "1:489865544413:web:7fcede79fccf4e4cfed134",
-          measurementId: "G-PBYTC4143Z",
-        };
-  
-        // Khởi tạo Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const database = getDatabase(app);
-  
-        function updateVisitCount() {
-          const visitRef = ref(database, "visit_count");
-  
-          get(visitRef).then((snapshot) => {
-            let visitCount = snapshot.val() || 0;
-            // visitCount++;
-            set(visitRef, visitCount);
-  
-            document.getElementById("visitCounter").innerText =
-              "Lượt truy cập: " + visitCount;
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      set,
+      runTransaction,
+    } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+    // Cấu hình Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyABQbJbXt5ppmruAmfoE8GqIRLnw6KFyAQ",
+      authDomain: "execount-380eb.firebaseapp.com",
+      databaseURL: "https://execount-380eb-default-rtdb.firebaseio.com",
+      projectId: "execount-380eb",
+      storageBucket: "execount-380eb.firebasestorage.app",
+      messagingSenderId: "489865544413",
+      appId: "1:489865544413:web:7fcede79fccf4e4cfed134",
+      measurementId: "G-PBYTC4143Z",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    function updateVisitCount() {
+      const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại (YYYY-MM-DD)
+      const referrer = document.referrer.includes("facebook")
+        ? "Facebook"
+        : "Direct"; // Xác định nguồn truy cập
+
+      const todayRef = ref(database, `visits/${today}/total`);
+      const globalTotalRef = ref(database, `total_visits`);
+      const todaySourceRef = ref(database, `visits/${today}/${referrer}`);
+      const globalSourceRef = ref(database, `source_visits/${referrer}`);
+
+      // Cập nhật lượt truy cập hôm nay
+      runTransaction(todayRef, (currentValue) => (currentValue || 0));
+
+      // Cập nhật tổng lượt truy cập
+      runTransaction(
+        globalTotalRef,
+        (currentValue) => (currentValue || 0) 
+      );
+
+      // Cập nhật số lượt truy cập theo nguồn hôm nay
+      runTransaction(
+        todaySourceRef,
+        (currentValue) => (currentValue || 0) 
+      );
+
+      // Cập nhật tổng số lượt truy cập theo nguồn
+      runTransaction(
+        globalSourceRef,
+        (currentValue) => (currentValue || 0) 
+      );
+
+      // Lấy dữ liệu để hiển thị
+      get(globalTotalRef).then((snapshot) => {
+        const totalVisits = snapshot.exists() ? snapshot.val() : 0;
+
+        get(ref(database, `source_visits/Facebook`)).then((snapshot) => {
+          const facebookVisits = snapshot.exists() ? snapshot.val() : 0;
+
+          get(ref(database, `source_visits/Direct`)).then((snapshot) => {
+            const directVisits = snapshot.exists() ? snapshot.val() : 0;
+
+            updateUI(totalVisits, facebookVisits, directVisits);
           });
-        }
-  
-        // Gọi hàm khi trang load
-        document.addEventListener("DOMContentLoaded", updateVisitCount);
-      </script>
+        });
+      });
+    }
+
+    function updateUI(totalCount, facebookCount, directCount) {
+      const visitCounter = document.getElementById("visitCounter");
+      if (visitCounter) {
+        visitCounter.innerHTML = `
+          <p>Lượt truy cập : ${facebookCount + directCount}</p>
+   
+        `;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", updateVisitCount);
+  </script>
   
   </body>
 </html>
