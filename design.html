@@ -313,6 +313,14 @@
       src="img/huhu.png"
       onclick="addPresetImage(this.src)"
     />
+    <img
+    src="img/design1.png"
+    onclick="addPresetImage(this.src)"
+  />
+  <img
+  src="img/design2.png"
+  onclick="addPresetImage(this.src)"
+/>
       <img
         src="img/aoThunTrang.png"
         onclick="addPresetImage(this.src)"
@@ -569,40 +577,48 @@ document.addEventListener("touchend", function () {
       }
 
       function exportImage() {
-        const canvas = document.getElementById("exportCanvas");
-        const ctx = canvas.getContext("2d");
-        const container = document.getElementById("canvas-container");
+    const canvas = document.getElementById("exportCanvas");
+    const ctx = canvas.getContext("2d");
+    const container = document.getElementById("canvas-container");
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Đặt kích thước canvas bằng kích thước của container
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
 
-        const elements = Array.from(container.children);
-        elements.forEach((element) => {
-          if (element.tagName === "IMG") {
-            ctx.drawImage(
-              element,
-              parseInt(element.style.left),
-              parseInt(element.style.top),
-              element.width,
-              element.height
-            );
-          } else if (element.contentEditable === "true") {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const elements = Array.from(container.children);
+    elements.forEach((element) => {
+        if (element.tagName === "IMG") {
+            const img = new Image();
+            img.src = element.src;
+            img.onload = () => {
+                ctx.drawImage(
+                    img,
+                    parseInt(element.style.left),
+                    parseInt(element.style.top),
+                    element.width,
+                    element.height
+                );
+            };
+        } else if (element.contentEditable === "true") {
             ctx.font = `${element.style.fontSize} Arial`;
             ctx.fillStyle = element.style.color;
             ctx.fillText(
-              element.textContent,
-              parseInt(element.style.left),
-              parseInt(element.style.top) + parseInt(element.style.fontSize)
+                element.textContent,
+                parseInt(element.style.left),
+                parseInt(element.style.top) + parseInt(element.style.fontSize)
             );
-          }
-        });
+        }
+    });
 
-        setTimeout(() => {
-          const link = document.createElement("a");
-          link.download = "dimuonnoi.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }, 500);
-      }
+    setTimeout(() => {
+        const link = document.createElement("a");
+        link.download = "dimuonnoi.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    }, 500);
+}
 
 
     </script>
