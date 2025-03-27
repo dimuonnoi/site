@@ -127,6 +127,22 @@
         vertical-align: middle;
         /* Căn giữa logo với văn bản */
       }
+      @keyframes blink {
+        0% {
+          color: red;
+        }
+        50% {
+          color: white;
+        }
+        100% {
+          color: red;
+        }
+      }
+
+      .nav-item a.blinking {
+        animation: blink 1s infinite;
+        font-weight: bold;
+      }
     </style>
   </head>
 
@@ -182,10 +198,16 @@
               <a class="nav-link text-uppercase" href="meoDuLich.html">Tips</a>
             </li>
             <li class="nav-item px-lg-4">
-              <a class="nav-link text-uppercase" href="design.html">Design</a>
+              <a class="nav-link text-uppercase blinking" href="design.html"
+                >Design</a
+              >
             </li>
             <li class="nav-item px-lg-4">
-              <a class="nav-link text-uppercase" href="blog.html">Order</a>
+              <a
+                class="nav-link text-uppercase blinking"
+                href="https://dimuonnoi.vercel.app/"
+                >Order</a
+              >
             </li>
             <li class="nav-item px-lg-4">
               <a class="nav-link text-uppercase" href="blog.html">Blog</a>

@@ -146,6 +146,23 @@
         vertical-align: middle;
         /* Căn giữa logo với văn bản */
       }
+
+      @keyframes blink {
+        0% {
+          color: red;
+        }
+        50% {
+          color: white;
+        }
+        100% {
+          color: red;
+        }
+      }
+
+      .nav-item a.blinking {
+        animation: blink 1s infinite;
+        font-weight: bold;
+      }
     </style>
   </head>
 
@@ -192,15 +209,22 @@
             <li class="nav-item px-lg-4">
               <a class="nav-link text-uppercase" href="meoDuLich.html">Tips</a>
             </li>
-            <li class="nav-item px-lg-4">
+            <!-- <li class="nav-item px-lg-4">
               <a class="nav-link text-uppercase" href="design.html">Design</a>
+            </li> -->
+
+            <li class="nav-item px-lg-4">
+              <a class="nav-link text-uppercase blinking" href="design.html"
+                >Design</a
+              >
             </li>
+
             <li class="nav-item px-lg-4">
               <a class="nav-link text-uppercase" href="blog.html">Blog</a>
             </li>
             <li class="nav-item px-lg-4">
               <a
-                class="nav-link text-uppercase"
+                class="nav-link text-uppercase blinking"
                 href="https://dimuonnoi.vercel.app/"
                 >Order</a
               >
@@ -226,8 +250,10 @@
       <a href="hotel.html" class="circle-button">Hotel</a>
       <a href="more.html" class="circle-button">Location</a>
       <a href="meoDuLich.html" class="circle-button">Tips</a>
-      <a href="design.html" class="circle-button">Design</a>
-      <a href="https://dimuonnoi.vercel.app/" class="circle-button">Order</a>
+      <a href="design.html" class="circle-button blinking">Design</a>
+      <a href="https://dimuonnoi.vercel.app/" class="circle-button blinking"
+        >Order</a
+      >
       <a href="index.html" class="circle-button">Home</a>
       <a href="blog.html" class="circle-button">Blog</a>
 
